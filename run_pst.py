@@ -6,10 +6,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 def gen_data(batch_size, max_length=10, test=False):
-    length = np.random.randint(1, max_length + 1)
-    x = np.random.randint(1, 100, (batch_size, length))
+    x = np.random.randint(1, 100, (batch_size, max_length))
     y = np.max(x, axis=1)
     x, y = np.expand_dims(x, axis=2), np.expand_dims(y, axis=1)
+
+
     print("x: ", x)
     print("y: ", y)
     print(x.shape)
@@ -43,7 +44,8 @@ def train(model):
     losses = []
     for _ in range(500):
         x, y = gen_data(batch_size=2 ** 10, max_length=10)
-        x, y = torch.from_numpy(x).float().cuda()., torch.from_numpy(y).float().cuda()
+        x, y = torch.from_numpy(x).float().cuda().squeeze(2), torch.from_numpy(y).float().cuda().squeeze(1)
+
         loss = criterion(model(x), y)
         optimizer.zero_grad()
         loss.backward()
